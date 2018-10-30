@@ -46,8 +46,16 @@ meta <- google_analytics_meta()
 
 # Get the data
 sessions = google_analytics(ga_id,
-                            date_range = c('2018-03-01','2018-08-01'),
-                            metrics = "sessions",dimensions = "date")
+                            date_range = c('2018-02-01','2018-10-30'),
+                            metrics = c("sessions","Users","newUsers","bounces"),dimensions = "date")
 
 # Make a simple plot
-ggplot(sessions,aes(x=date,y=sessions))+geom_line()+labs(x="Date",y="Number of new users",title="")
+gplot <- ggplot(sessions,aes(x=date,y=newUsers))+
+  geom_line(color="blue")+
+  geom_line(aes(y=sessions),color="red")+
+  geom_line(aes(y=Users),color="black")+
+  labs(x="Date",y="Frequency")+scale_x_date(date_breaks = "1 month")+
+  theme(axis.text.x = element_text(angle = -75,vjust = 0))
+
+# Plot the figure
+gplot
