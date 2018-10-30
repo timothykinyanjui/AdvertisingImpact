@@ -26,6 +26,9 @@ post.period <- c(71, 100)
 impact <- CausalImpact(data, pre.period, post.period)
 plot(impact)
 
+# Generate prose report
+summary(impact,"report")
+
 # Authenticate googleAnalytics - uncomment to authenticate
 ga_auth()
 
@@ -36,7 +39,7 @@ account_list = ga_account_list()
 account_list[2,'viewId']
 
 # Get the id of the account you want to extract data
-ga_id = 169170564 # For chicdreads 133523695
+ga_id = 169170564 # For Chicdreads:133523695  Chicsterlocs:169170564
 
 # Get a list of all metrics and dimensions I can use.
 meta <- google_analytics_meta()
