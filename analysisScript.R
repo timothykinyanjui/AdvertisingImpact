@@ -5,29 +5,10 @@
 rm(list=ls())
 
 # Load the required packages
-require(CausalImpact)
-require(googleAnalyticsR)
-require(googleAuthR)
-require(googleCloudStorageR)
-
-# Dummy data
-set.seed(1)
-x1 <- 100 + arima.sim(model = list(ar = 0.999), n = 100)
-y <- 1.2 * x1 + rnorm(100)
-y[71:100] <- y[71:100] + 10
-data <- cbind(y, x1)
-
-# Plot the data
-matplot(data,type = "l")
-
-# Run the analysis
-pre.period <- c(1, 70)
-post.period <- c(71, 100)
-impact <- CausalImpact(data, pre.period, post.period)
-plot(impact)
-
-# Generate prose report
-summary(impact,"report")
+library(CausalImpact)
+library(googleAnalyticsR)
+library(googleAuthR)
+library(gridExtra)
 
 # Authenticate googleAnalytics - uncomment to authenticate
 ga_auth()
@@ -46,17 +27,40 @@ meta <- google_analytics_meta()
 
 # Get the data
 sessions = google_analytics(ga_id,
-                            date_range = c('2018-02-01','2018-10-30'),
+                            date_range = c('2018-04-01','2018-10-30'),
                             metrics = c("sessions","Users","newUsers","bounces","sessionDuration"),dimensions = "date")
 
 # Make a simple plot
 gplot <- ggplot(sessions,aes(x=date,y=newUsers))+
   geom_line(color="blue")+
-  geom_line(aes(y=sessions),color="red")+
-  geom_line(aes(y=Users),color="black")+
+  #geom_line(aes(y=sessions),color="red")+
+  #geom_line(aes(y=Users),color="black")+
   #geom_line(aes(y=sessionDuration),color="magenta")+
-  labs(x="Date",y="Frequency")+scale_x_date(date_breaks = "1 month")+
-  theme(axis.text.x = element_text(angle = -75,vjust = 0))
+  labs(x="Date",y="Frequency",title="New users")+
+  #scale_x_date(date_breaks = "1 month")+
+  theme(axis.text.x = element_text(angle = 0,vjust = 0))
 
-# Plot the figure
-gplot
+# Make another simple plot
+gplot1 <- ggplot(sessions,aes(x=date,y=sessionDuration))+
+  geom_line(color="blue")+labs(x="Date",y="Frequency",title="Session duration")
+
+# Plot in a grid
+grid.arrange(gplot,gplot1,nrow=2)
+
+# Do the analysis
+
+# Put the data together
+data <- subset(sessions,select=c(date,newUsers,sessionDuration))
+
+# Define pre and post periods to show the starting date of the intervention
+pre.period <- as.Date(c("2018-04-01", "2018-06-30"))
+post.period <- as.Date(c("2018-07-01", "2018-10-30"))
+
+# Run the model
+impact <- CausalImpact(data,pre.period,post.period)
+
+# Plot
+plot(impact)
+
+# Write report
+summary(impact,"report")
