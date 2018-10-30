@@ -53,8 +53,8 @@ grid.arrange(gplot,gplot1,nrow=2)
 data <- subset(sessions,select=c(date,newUsers,sessionDuration))
 
 # Define pre and post periods to show the starting date of the intervention
-pre.period <- as.Date(c("2018-04-01", "2018-06-30"))
-post.period <- as.Date(c("2018-07-01", "2018-10-30"))
+pre.period <- as.Date(c("2018-04-01", "2018-07-01"))
+post.period <- as.Date(c("2018-07-02", "2018-10-30"))
 
 # Run the model
 impact <- CausalImpact(data,pre.period,post.period,model.args = list(niter = 10000, nseasons = 1))
