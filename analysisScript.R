@@ -9,6 +9,7 @@ library(CausalImpact)
 library(googleAnalyticsR)
 library(googleAuthR)
 library(gridExtra)
+library(ggplot2)
 
 # Authenticate googleAnalytics - uncomment to authenticate
 ga_auth()
