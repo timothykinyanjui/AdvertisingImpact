@@ -49,7 +49,6 @@ gplot1 <- ggplot(sessions,aes(x=date,y=sessionDuration))+
 grid.arrange(gplot,gplot1,nrow=2)
 
 # Do the analysis
-
 # Put the data together
 data <- subset(sessions,select=c(date,newUsers,sessionDuration))
 
