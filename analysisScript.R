@@ -14,7 +14,7 @@ library(ggplot2)
 # Authenticate googleAnalytics - uncomment to authenticate
 ga_auth()
 
-# List accounts
+# List all accounts
 account_list = ga_account_list()
 
 # Pick a profile id with data to query
