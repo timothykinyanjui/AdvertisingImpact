@@ -10,6 +10,8 @@ library(googleAnalyticsR)
 library(googleAuthR)
 library(gridExtra)
 library(ggplot2)
+library(magrittr)
+library(tidyverse)
 
 # Authenticate googleAnalytics - uncomment to authenticate
 ga_auth()
@@ -18,18 +20,22 @@ ga_auth()
 account_list = ga_account_list()
 
 # Pick a profile id with data to query
-account_list[2,'viewId']
+account_list$webPropertyName
+account_list$viewId
 
 # Get the id of the account you want to extract data
-ga_id = 169170564 # For Chicdreads:133523695  Chicsterlocs:169170564
+ga_id <- account_list$viewId[account_list$webPropertyName == "Chicsterlocs"]
+# ga_id = account_list$viewId[4] # For Chicdreads:133523695  Chicsterlocs:169170564
 
 # Get a list of all metrics and dimensions I can use.
-meta <- google_analytics_meta()
+meta <- ga_meta()
 
 # Get the data
 sessions = google_analytics(ga_id,
-                            date_range = c('2018-04-01','2018-10-30'),
+                            date_range = c('2018-04-01','2019-10-28'),
                             metrics = c("sessions","Users","newUsers","bounces","sessionDuration"),dimensions = "date")
+
+sessions = as.tibble(sessions)
 
 # Make a simple plot
 gplot <- ggplot(sessions,aes(x=date,y=newUsers))+
@@ -50,11 +56,12 @@ grid.arrange(gplot,gplot1,nrow=2)
 
 # Do the analysis
 # Put the data together
-data <- subset(sessions,select=c(date,newUsers,sessionDuration))
+#data <- subset(sessions,select=c(date,newUsers,sessionDuration))
+data <- sessions %>% select(date,newUsers,sessionDuration)
 
 # Define pre and post periods to show the starting date of the intervention
 pre.period <- as.Date(c("2018-04-01", "2018-07-01"))
-post.period <- as.Date(c("2018-07-02", "2018-10-30"))
+post.period <- as.Date(c("2018-07-02", "2019-10-28"))
 
 # Run the model
 impact <- CausalImpact(data,pre.period,post.period,model.args = list(niter = 10000, nseasons = 1))
