@@ -32,7 +32,7 @@ meta <- ga_meta()
 
 # Get the data
 sessions = google_analytics(ga_id,
-                            date_range = c('2018-04-01','2019-10-28'),
+                            date_range = c('2018-04-01','2019-10-31'),
                             metrics = c("sessions","Users","newUsers","bounces","sessionDuration"),dimensions = "date")
 
 sessions = as.tibble(sessions)
@@ -57,7 +57,7 @@ grid.arrange(gplot,gplot1,nrow=2)
 # Do the analysis
 # Put the data together
 #data <- subset(sessions,select=c(date,newUsers,sessionDuration))
-data <- sessions %>% select(date,newUsers,sessionDuration)
+data <- sessions %>% dplyr::select(date,newUsers,sessionDuration)
 
 # Define pre and post periods to show the starting date of the intervention
 pre.period <- as.Date(c("2018-04-01", "2018-07-01"))
